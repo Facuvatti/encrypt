@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 def weierstrass(x, a=0.5, b=3, n_max=100, x_offset=0, y_offset=0):
     if not isinstance(b,int): 
@@ -23,6 +22,9 @@ def normalize_range(y, desired_min, desired_max):
     # 2. Transformación lineal al nuevo rango
     normalized_y = desired_min + ((y - current_min) / (current_max - current_min)) * (desired_max - desired_min)
     return normalized_y
+def normalize(value, in_min, in_max, out_min, out_max):
+  """Mapea un número desde un rango de entrada hacia un rango de salida."""
+  return out_min + ((value - in_min) / (in_max - in_min)) * (out_max - out_min)
 
 def weierstrass_normalized(x, a=0.5, b=3, n_max=100, x_offset=0, y_offset=0,min=0,max=1):
     y = weierstrass(x, a, b, n_max, x_offset, y_offset)

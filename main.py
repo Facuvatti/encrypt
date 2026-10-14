@@ -1,8 +1,9 @@
 import textwrap
 import random
 import numpy as np
-from weierstrass import weierstrass, normalize_range
+from weierstrass import weierstrass, normalize
 import argparse
+letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 def randint(min, max, divider):
     # 1. Count how many valid numbers (NOT multiples) exist in the range
     total_valid = (max - min + 1) - (max // divider - (min - 1) // divider)
@@ -20,6 +21,7 @@ text = args.text
 words = text.split(" ")
 # print(words)
 indices = np.arange(len(words))
+x = np.linspace(0, 3000, 10) if len(words) < 3000 else indices
 raw_weierstrass = weierstrass(indices, args.a, args.b, x_offset=args.offset)
 w_min = np.min(raw_weierstrass)
 w_max = np.max(raw_weierstrass)
@@ -27,10 +29,20 @@ for i, word in enumerate(words):
     syllables = [] 
     half = len(word) // 2
     val = raw_weierstrass[i]
-    normalized = 1 + ((val - w_min) / (w_max - w_min)) * (half - 1)
+    normalized = normalize(val,w_min,w_max,1,half-1)
     rounded = int(round(normalized))
     words[i] = textwrap.wrap(word,width=max(1,rounded))
 print(words)
-        
+for i, word in enumerate(words):
+    for j, syl in enumerate(word):
+        val = raw_weierstrass[i*j]
+        normalized = normalize(val,w_min,w_max,1,5)
+        length = int(round(normalized))
+        for k in range(0,length):
+            val = raw_weierstrass[j*k+i]
+            letter_index = int(round(normalize(val,w_min,w_max,0,26)))
+            letter = letters[letter_index]
+            word[j] = letter + word[j]
+print(words)
 # with open("output.txt", "w") as f:
 #     f.write()
