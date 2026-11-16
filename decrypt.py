@@ -375,18 +375,21 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-a",
+        "--a",
         type=float,
         required=True
     )
 
     parser.add_argument(
         "-b",
+        "--b",
         type=int,
         required=True
     )
 
     parser.add_argument(
         "-offset",
+        "--offset",
         "-o",
         type=int,
         required=True
