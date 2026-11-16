@@ -206,12 +206,12 @@ def cypher(text: str, a: float, b: int, offset: int) -> bytes:
         result_words.append("".join(encrypted_word))
 
     result = "".join(result_words)
-
+    body = result.encode("utf-8")
     # Formato binario versionado y autenticado.
 
     ciphertext = pack_ciphertext(
         len(text),
-        result,
+        body,
         seed + b"|auth"
     )
 
@@ -223,7 +223,7 @@ def cypher(text: str, a: float, b: int, offset: int) -> bytes:
 
     print("=== FIN ===")
 
-    return ciphertext
+    return ciphertext, body
 
 
 example = "Podes escribir lo que sea y nadie lo va a encontrar muajajjaa"
