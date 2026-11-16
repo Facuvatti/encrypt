@@ -1,0 +1,101 @@
+name: Build and publish releases
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.asset }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: encrypt-windows-x64
+            executable_extension: .exe
+          - os: ubuntu-24.04
+            asset: encrypt-linux-x64
+            executable_extension: ""
+          - os: macos-15-intel
+            asset: encrypt-macos-x64
+            executable_extension: ""
+          - os: macos-latest
+            asset: encrypt-macos-arm64
+            executable_extension: ""
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Build encrypt executable
+        run: python -m PyInstaller --clean --onefile --name encrypt encrypt.py
+
+      - name: Build decrypt executable
+        run: python -m PyInstaller --clean --onefile --name decrypt decrypt.py
+
+      - name: Prepare release archive
+        shell: python {0}
+        env:
+          ASSET_NAME: ${{ matrix.asset }}
+          EXE_EXTENSION: ${{ matrix.executable_extension }}
+        run: |
+          import os
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile
+
+          asset = os.environ["ASSET_NAME"]
+          extension = os.environ["EXE_EXTENSION"]
+          dist = Path("dist")
+          archive = Path(f"{asset}.zip")
+
+          with ZipFile(archive, "w", compression=ZIP_DEFLATED) as output:
+              for name in ("encrypt", "decrypt"):
+                  executable = dist / f"{name}{extension}"
+                  if not executable.is_file():
+                      raise SystemExit(f"Missing executable: {executable}")
+                  output.write(executable, arcname=executable.name)
+              output.write("RELEASE_NOTES.txt", arcname="README.txt")
+
+      - name: Upload platform archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download platform archives
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create release and attach binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release-assets/*.zip
