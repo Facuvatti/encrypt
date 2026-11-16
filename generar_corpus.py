@@ -1,7 +1,7 @@
 # generar_corpus.py
 import random
 import time
-from cifrador import cifrar
+from encriptar import cypher as cifrar
 
 # --- Reproducibilidad (importante para volver a correr las pruebas) ---
 random.seed(12345)
