@@ -5,7 +5,48 @@
 Encrypt is a Python research project that experiments with a custom text-transformation pipeline. It combines a Weierstrass function, a deterministic SHA-256-based pseudorandom generator, Unicode-aware transformations, and a versioned binary ciphertext container.
 
 > [!WARNING]
-> **Experimental software — not suitable for protecting real secrets.** This project implements a custom cryptographic design that has not been independently reviewed or audited. Do not use it for passwords, private messages, sensitive files, or production systems. Prefer established, audited cryptographic libraries and protocols for real-world security.
+> **Experimental software — not suitable for protecting real secrets.** This custom cryptographic design has not been independently reviewed or audited. Do not use it for passwords, private messages, sensitive files, or production systems. Prefer established, audited cryptographic libraries and protocols for real-world security.
+
+## Download standalone programs
+
+Prebuilt releases are published for Windows, macOS, and Linux on the [GitHub Releases page](https://github.com/Facuvatti/encrypt/releases).
+
+Each archive contains two standalone programs:
+- `encrypt` / `encrypt.exe`: encrypts text and prints the FCYP v2 ciphertext in Base64.
+- `decrypt` / `decrypt.exe`: accepts that Base64 ciphertext and prints the recovered text.
+
+Python and NumPy are bundled; users do not need to install Python.
+
+### Quick start
+
+1. Download the archive for your operating system from [Releases](https://github.com/Facuvatti/encrypt/releases).
+2. Extract it and open a terminal in that folder.
+3. Encrypt:
+
+```bash
+./encrypt --text "Texto para probar" --a 0.5 --b 3 --offset 1
+```
+
+On Windows, run `encrypt.exe`.
+
+Copy the Base64 value printed between `=== CIPHERTEXT BASE64 ===` and `=== FIN ===`, then decrypt:
+
+```bash
+./decrypt --ciphertext "PEGAR_BASE64_AQUI" --a 0.5 --b 3 --offset 1
+```
+
+On Windows, run `decrypt.exe`. Use exactly the same `a`, `b`, and `offset` values for both commands. A nonzero offset that is a multiple of 100 is not accepted.
+
+### Available release archives
+
+| Platform | Archive |
+| --- | --- |
+| Windows x64 | `encrypt-windows-x64.zip` |
+| Linux x64 | `encrypt-linux-x64.zip` |
+| macOS Intel (x64) | `encrypt-macos-x64.zip` |
+| macOS Apple Silicon (ARM64) | `encrypt-macos-arm64.zip` |
+
+A release is created automatically when a version tag matching `v*` is pushed. The build workflow runs regression tests before packaging the executables.
 
 ## What it explores
 
@@ -19,56 +60,47 @@ Encrypt is a Python research project that experiments with a custom text-transfo
 
 ```text
 encrypt/
+├── .github/workflows/
+│   ├── ci.yml
+│   └── release.yml
 ├── cipher/
-│   ├── cesar.py          # Unicode-aware Caesar transformations
-│   ├── codec.py          # Integer/fragment encoding and FCYP v2 container
-│   └── dict_text.py      # Text-to-position dictionary helper
-├── encrypt.py            # Encryption entry point
-├── decrypt.py            # Decryption entry point
-├── generate_corpus.py    # Random corpus generation for experiments
-├── rng.py                # Deterministic SHA-256-based PRNG
-├── utils.py              # Integer splitting helpers
-├── weierstrass.py        # Weierstrass function and normalization
-└── requirements.txt      # Python dependencies
+│   ├── cesar.py
+│   ├── codec.py
+│   └── dict_text.py
+├── tests/
+│   └── test_roundtrip.py
+├── decrypt.py
+├── encrypt.py
+├── generate_corpus.py
+├── RELEASE_NOTES.txt
+├── requirements.txt
+├── rng.py
+├── utils.py
+└── weierstrass.py
 ```
 
-## Requirements
+## Run from source
 
-- Python 3.10 or newer
-- NumPy
-
-Install the dependency with:
+Requirements: Python 3.10 or newer and NumPy.
 
 ```bash
 python -m pip install -r requirements.txt
+python encrypt.py --text "Texto para probar" --a 0.5 --b 3 --offset 1
+python decrypt.py --ciphertext "PEGAR_BASE64_AQUI" --a 0.5 --b 3 --offset 1
 ```
 
-## Current status
+Run the regression tests with:
 
-The repository is a work in progress. The encryption and decryption flow is being developed, and the current source contains inconsistent module imports (including `cipher.cesar`, `cypher.cesar`, and the actual `cipher/cesar.py` path). As a result, the command-line workflow may fail before running.
-
-The corpus-generation script is intended for experiments and currently writes to `./pruebas/salida2.bin`; that output directory must exist before running it. The script also invokes the encryption routine repeatedly and is not a ready-made benchmark or security test suite.
+```bash
+python -m unittest discover -s tests -v
+```
 
 ## Security notes
 
 - A custom cipher is not considered secure merely because it uses SHA-256, HMAC, Unicode transformations, or complicated mathematical functions.
-- The deterministic seed is derived from the supplied parameters. Those parameters should not be treated as a substitute for a cryptographically secure secret key.
+- The deterministic seed is derived from the supplied parameters. Those parameters are not a substitute for a cryptographically secure secret key.
 - HMAC can detect modifications when its key remains secret, but it does not make an unreviewed encryption construction secure.
 - No independent cryptographic audit, formal security proof, or production-readiness claim is made for this project.
-
-## Goals
-
-This repository is primarily a space for learning and experimentation with:
-
-1. Reversible transformations of text and Unicode data.
-2. Deterministic pseudorandom sequences.
-3. Mathematical functions as inputs to algorithmic processes.
-4. Binary serialization and integrity validation.
-5. Testing and evaluating a custom encryption design.
-
-## Contributing
-
-Suggestions, bug reports, and constructive reviews are welcome. If you work on the cryptographic design, please include reproducible tests and clearly document any security assumptions.
 
 ## License
 
