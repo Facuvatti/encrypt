@@ -1,20 +1,37 @@
-def cifrar_rot256(texto: str, clave: int) -> tuple[str, str]:
-  """Cifra un texto usando ROT256 y devuelve una tupla con:
+def universal_caesar_cipher(text, shift):
+    """
+    Apply a Caesar-style shift over the full Unicode code-point range.
 
-  1. El texto cifrado.
-  2. El carácter que reemplaza al espacio (' ').
-  """
-  datos = texto.encode("latin-1")
-  cifrados = bytes((b + clave) % 256 for b in datos)
-  texto_cifrado = cifrados.decode("latin-1")
+    Each character's code point is offset by `shift`. If the resulting
+    code point (mod 1_114_112) falls inside the surrogate range
+    (0xD800–0xDFFF, i.e. 55296–57343), which Python's `chr()` rejects,
+    it is bumped past that range by 2048. The final value is taken
+    modulo 1_114_112 so it always stays within valid Unicode.
 
-  # Calcular qué carácter reemplaza al espacio (código 32)
-  nuevo_codigo_espacio = (32 + clave) % 256
+    Parameters
+    ----------
+    text : str
+        Input string to transform.
+    shift : int
+        Integer offset applied to every code point.
 
-  return texto_cifrado
-def descifrar_rot256(texto_cifrado: str, clave: int) -> str:
-  """Descifra un texto previamente cifrado con ROT256."""
-  datos = texto_cifrado.encode("latin-1")
-  descifrados = bytes((b - clave) % 256 for b in datos)
-  return descifrados.decode("latin-1")
+    Returns
+    -------
+    str
+        A string of the same length as `text`, where every character
+        has been shifted according to the rule above.
+    """
+    result = []
 
+    for char in text:
+        code = ord(char)
+        new_code = code + shift
+
+        if 55296 <= (new_code % 1114112) <= 57343:
+            new_code += 2048
+
+        safe_code = new_code % 1114112
+
+        result.append(chr(safe_code))
+
+    return ''.join(result)
