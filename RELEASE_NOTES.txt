@@ -1,0 +1,27 @@
+ENCRYPT — STANDALONE TEST BUILDS
+
+This archive contains two standalone command-line programs:
+- encrypt (or encrypt.exe on Windows)
+- decrypt (or decrypt.exe on Windows)
+
+No Python installation is required.
+
+ENCRYPT
+  encrypt --text "Text to encrypt" --a 0.5 --b 3 --offset 1
+
+The program prints the ciphertext as Base64 between the
+"=== CIPHERTEXT BASE64 ===" and "=== FIN ===" markers.
+
+DECRYPT
+  decrypt --ciphertext "PASTE_BASE64_HERE" --a 0.5 --b 3 --offset 1
+
+Use the same a, b, and offset values for both commands.
+A nonzero offset that is a multiple of 100 is not accepted.
+
+On Windows, run encrypt.exe and decrypt.exe. On macOS and Linux,
+you may need to grant execute permission:
+  chmod +x encrypt decrypt
+
+SECURITY WARNING
+This is experimental software and has not been independently
+audited. Do not use it to protect real secrets or sensitive data.
