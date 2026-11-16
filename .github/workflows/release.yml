@@ -21,10 +21,10 @@ jobs:
           - os: ubuntu-24.04
             asset: encrypt-linux-x64
             executable_extension: ""
-          - os: macos-15-intel
+          - os: macos-26-intel
             asset: encrypt-macos-x64
             executable_extension: ""
-          - os: macos-latest
+          - os: macos-26
             asset: encrypt-macos-arm64
             executable_extension: ""
     runs-on: ${{ matrix.os }}
