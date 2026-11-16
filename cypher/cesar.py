@@ -1,37 +1,76 @@
-def universal_caesar_cipher(text, shift):
-    """
-    Apply a Caesar-style shift over the full Unicode code-point range.
+"""Cifrado César reversible sobre los escalares Unicode válidos."""
 
-    Each character's code point is offset by `shift`. If the resulting
-    code point (mod 1_114_112) falls inside the surrogate range
-    (0xD800–0xDFFF, i.e. 55296–57343), which Python's `chr()` rejects,
-    it is bumped past that range by 2048. The final value is taken
-    modulo 1_114_112 so it always stays within valid Unicode.
+UNICODE_LIMIT = 0x110000
+SURROGATE_START = 0xD800
+SURROGATE_END = 0xDFFF
+SURROGATE_COUNT = SURROGATE_END - SURROGATE_START + 1
+UNICODE_SCALAR_COUNT = UNICODE_LIMIT - SURROGATE_COUNT
 
-    Parameters
-    ----------
-    text : str
-        Input string to transform.
-    shift : int
-        Integer offset applied to every code point.
 
-    Returns
-    -------
-    str
-        A string of the same length as `text`, where every character
-        has been shifted according to the rule above.
-    """
-    result = []
+def _scalar_to_index(char: str) -> int:
+    """Mapea un escalar Unicode a [0, UNICODE_SCALAR_COUNT)."""
+    if len(char) != 1:
+        raise ValueError("Se esperaba exactamente un carácter")
 
-    for char in text:
-        code = ord(char)
-        new_code = code + shift
+    code = ord(char)
 
-        if 55296 <= (new_code % 1114112) <= 57343:
-            new_code += 2048
+    if SURROGATE_START <= code <= SURROGATE_END:
+        raise ValueError("Los sustitutos Unicode no son escalares válidos")
 
-        safe_code = new_code % 1114112
+    if code > SURROGATE_END:
+        return code - SURROGATE_COUNT
 
-        result.append(chr(safe_code))
+    return code
 
-    return ''.join(result)
+
+def _index_to_scalar(index: int) -> str:
+    """Mapea un índice del alfabeto de escalares Unicode a un carácter."""
+    if not isinstance(index, int):
+        raise TypeError("El índice debe ser un entero")
+
+    index %= UNICODE_SCALAR_COUNT
+
+    if index >= SURROGATE_START:
+        index += SURROGATE_COUNT
+
+    return chr(index)
+
+
+def universal_caesar_cipher(text: str, shift: int) -> str:
+    """Desplaza cada carácter dentro del alfabeto Unicode sin colisiones."""
+    if not isinstance(text, str):
+        raise TypeError("text debe ser str")
+
+    if not isinstance(shift, int):
+        raise TypeError("shift debe ser int")
+
+    shift %= UNICODE_SCALAR_COUNT
+
+    return "".join(
+        _index_to_scalar(_scalar_to_index(char) + shift)
+        for char in text
+    )
+
+
+def universal_caesar_decipher(text: str, shift: int) -> str:
+    """Invierte exactamente universal_caesar_cipher."""
+    if not isinstance(text, str):
+        raise TypeError("text debe ser str")
+
+    if not isinstance(shift, int):
+        raise TypeError("shift debe ser int")
+
+    shift %= UNICODE_SCALAR_COUNT
+
+    return "".join(
+        _index_to_scalar(_scalar_to_index(char) - shift)
+        for char in text
+    )
+
+
+def caesar_shift_between(original_char: str, encrypted_char: str) -> int:
+    """Recupera el desplazamiento modular entre dos escalares Unicode."""
+    original_index = _scalar_to_index(original_char)
+    encrypted_index = _scalar_to_index(encrypted_char)
+
+    return (encrypted_index - original_index) % UNICODE_SCALAR_COUNT
