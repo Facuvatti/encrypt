@@ -32,7 +32,7 @@ def params_aleatorios():
 
 # --- Loop principal ---
 OBJETIVO_BYTES = 20 * 1024 * 1024   # 20 MB
-PATH = "salida.bin"
+PATH = "salida2.bin"
 
 with open(PATH, "wb") as f:
     total = 0
@@ -41,7 +41,7 @@ with open(PATH, "wb") as f:
     while total < OBJETIVO_BYTES:
         texto = texto_aleatorio()
         a, b, offset = params_aleatorios()
-        result_bytes = cifrar(texto, a, b, offset)   # ya son bytes
+        _, result_bytes = cifrar(texto, a, b, offset)
         f.write(result_bytes)
         total += len(result_bytes)
         i += 1
