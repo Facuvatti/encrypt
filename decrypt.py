@@ -367,6 +367,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-ciphertext",
+        "--ciphertext",
         "-c",
         required=True,
         help="Ciphertext en Base64"
