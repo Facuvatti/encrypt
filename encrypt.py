@@ -119,8 +119,8 @@ example = "Podes escribir lo que sea y nadie lo va a encontrar muajajjaa"
 def main():
     parser = argparse.ArgumentParser(description="Cifra texto con el formato FCYP v2")
     parser.add_argument("-text", "--text", "-t", type=str, default=example)
-    parser.add_argument("-a", type=float, required=True)
-    parser.add_argument("-b", type=int, required=True)
+    parser.add_argument("-a", "--a", type=float, required=True)
+    parser.add_argument("-b", "--b", type=int, required=True)
     parser.add_argument("-offset", "--offset", "-o", type=int, required=True)
     args = parser.parse_args()
     cipher(args.text, args.a, args.b, args.offset)
