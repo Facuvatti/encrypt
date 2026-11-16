@@ -9,7 +9,7 @@ Encrypt is a Python research project that experiments with a custom text-transfo
 
 ## Download standalone programs
 
-Prebuilt releases are published for Windows, macOS, and Linux on the [GitHub Releases page](https://github.com/Facuvatti/encrypt/releases).
+The automated release workflow builds standalone archives for Windows, macOS, and Linux and attaches them to the [GitHub Releases page](https://github.com/Facuvatti/encrypt/releases) when a version tag is pushed.
 
 Each archive contains two standalone programs:
 - `encrypt` / `encrypt.exe`: encrypts text and prints the FCYP v2 ciphertext in Base64.
