@@ -32,7 +32,7 @@ def params_aleatorios():
 
 # --- Loop principal ---
 OBJETIVO_BYTES = 20 * 1024 * 1024   # 20 MB
-PATH = "salida2.bin"
+PATH = "./pruebas/salida2.bin"
 
 with open(PATH, "wb") as f:
     total = 0
