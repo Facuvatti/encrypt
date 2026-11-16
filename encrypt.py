@@ -3,9 +3,9 @@ import base64
 
 import numpy as np
 
-from cypher.cesar import universal_caesar_cipher
+from cipher.cesar import universal_caesar_cipher
 
-from cypher.codec import (
+from cipher.codec import (
     digits_required,
     fragment_to_int,
     int_to_base_digits,
@@ -17,7 +17,7 @@ from utils import split_into_parts
 from weierstrass import normalize, weierstrass
 
 
-def cypher(text: str, a: float, b: int, offset: int) -> bytes:
+def cipher(text: str, a: float, b: int, offset: int) -> bytes:
     """Cifra texto con el esquema Weierstrass + HashRNG (formato v2)."""
 
     if not isinstance(text, str):
@@ -263,7 +263,7 @@ def main():
 
     args = parser.parse_args()
 
-    cypher(
+    cipher(
         args.text,
         args.a,
         args.b,

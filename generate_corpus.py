@@ -1,14 +1,11 @@
-# generar_corpus.py
+# generate_corpus.py
 import random
 import time
-from encriptar import cypher as cifrar
+from encrypt import cipher
 
-# --- Reproducibilidad (importante para volver a correr las pruebas) ---
 random.seed(12345)
 
-# --- Banco de palabras: español realista ---
-# Usá palabras reales para que el test refleje tu caso de uso.
-# Si querés más realismo todavía, leé un .txt y cortá trozos random.
+
 PALABRAS = """el la de que y a en un ser se no haber por con su para como estar
 tener le lo todo pero mas hacer o poder decir este ir otro ese si me ya ver
 porque dar cuando muy sin vez mucha saber tiempo mismo ahora cada vida otro
@@ -20,14 +17,14 @@ circulo cuadrado triangulo esfera cubo espacio materia energia fuerza
 movimiento cambio causa efecto principio final verdad mentira amor odio miedo
 valor honor justicia libertad igualdad fraternidad""".split()
 
-def texto_aleatorio(min_palabras=5, max_palabras=300):
+def random_text(min_palabras=5, max_palabras=300):
     n = random.randint(min_palabras, max_palabras)
     return " ".join(random.choice(PALABRAS) for _ in range(n))
 
-def params_aleatorios():
+def random_params():
     a      = random.uniform(0.001, 4.0)
-    b      = random.randint(2, 1_000_000)       # moderado: evita OverflowError
-    offset = random.randrange(1, 100_001, 100)  # 1, 101, 201, ...
+    b      = random.randint(2, 1_000_000)
+    offset = random.randrange(1, 100_001, 100) 
     return a, b, offset
 
 # --- Loop principal ---
@@ -39,9 +36,9 @@ with open(PATH, "wb") as f:
     i = 0
     t0 = time.time()
     while total < OBJETIVO_BYTES:
-        texto = texto_aleatorio()
-        a, b, offset = params_aleatorios()
-        _, result_bytes = cifrar(texto, a, b, offset)
+        texto = random_text()
+        a, b, offset = random_params()
+        _, result_bytes = cipher(texto, a, b, offset)
         f.write(result_bytes)
         total += len(result_bytes)
         i += 1

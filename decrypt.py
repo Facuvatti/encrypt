@@ -4,9 +4,9 @@ import binascii
 
 import numpy as np
 
-from cypher.cesar import caesar_shift_between
+from cipher.cesar import caesar_shift_between
 
-from cypher.codec import (
+from cipher.codec import (
     base_digits_to_int,
     digits_required,
     int_to_fragment,
