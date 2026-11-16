@@ -32,15 +32,14 @@ def pack_ciphertext(
         plain_char_count
     )
 
-    body = encrypted_body.encode("utf-8")
 
     tag = hmac.new(
         auth_key,
-        prefix + body,
+        prefix + encrypted_body,
         "sha256"
     ).digest()
 
-    return prefix + tag + body
+    return prefix + tag + encrypted_body
 
 
 def unpack_ciphertext(
