@@ -42,11 +42,22 @@ On Windows, run `decrypt.exe`. Use exactly the same `a`, `b`, and `offset` value
 | Platform | Archive |
 | --- | --- |
 | Windows x64 | `encrypt-windows-x64.zip` |
-| Linux x64 | `encrypt-linux-x64.zip` |
+| Linux x64 (x86_64) | `encrypt-linux-x64.zip` |
+| Linux ARM64 (aarch64, glibc) | `encrypt-linux-arm64.zip` |
 | macOS Intel (x64) | `encrypt-macos-x64.zip` |
 | macOS Apple Silicon (ARM64) | `encrypt-macos-arm64.zip` |
 
-A release is created automatically when a version tag matching `v*` is pushed. The build workflow runs regression tests before packaging the executables.
+A release is created automatically when a version tag matching `v*` is pushed. The build workflow runs regression tests before packaging the executables. Linux ARM64 is built separately from x86_64.
+
+### Android / Termux (ARM64)
+
+Termux uses Android's Bionic C library, so the generic Linux ARM64 executable is not guaranteed to run there. Install the Termux-native version instead (it uses Termux Python and NumPy):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Facuvatti/encrypt/main/install-termux.sh | bash
+```
+
+Then run `encrypt --help` or `decrypt --help` from Termux. This installer is intended for Termux on Android ARM64; it does not install the standalone Linux binary.
 
 ## What it explores
 
